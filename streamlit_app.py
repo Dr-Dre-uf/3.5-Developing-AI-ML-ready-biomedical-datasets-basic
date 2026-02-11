@@ -24,7 +24,7 @@ def display_performance_monitor():
     cpu_percent = process.cpu_percent(interval=0.1)
     
     st.sidebar.markdown("---")
-    st.sidebar.caption("📊 **System Health Monitor**")
+    st.sidebar.caption("**System Health Monitor**")
     c1, c2 = st.sidebar.columns(2)
     c1.metric("CPU Load", f"{cpu_percent}%")
     c2.metric("RAM", f"{mem_mb:.1f} MB")
@@ -37,11 +37,11 @@ def load_data():
     data = {
         'Patient_ID': np.arange(1, 101),
         'Age': np.random.randint(20, 80, 100),
-        'Blood_Pressure': np.append(np.random.randint(90, 140, 95), [300, 310, 320, 330, 340]),  # Outliers
-        'Cholesterol': np.append(np.random.randint(150, 250, 95), [500, 510, 520, 530, 540]),  # Outliers
-        'Glucose': np.append(np.random.randint(70, 150, 95), [300, 310, 320, 330, 340]),  # Outliers
+        [cite_start]'Blood_Pressure': np.append(np.random.randint(90, 140, 95), [300, 310, 320, 330, 340]),  # Outliers [cite: 13]
+        [cite_start]'Cholesterol': np.append(np.random.randint(150, 250, 95), [500, 510, 520, 530, 540]),  # Outliers [cite: 13]
+        [cite_start]'Glucose': np.append(np.random.randint(70, 150, 95), [300, 310, 320, 330, 340]),  # Outliers [cite: 13]
         'BMI': np.append(np.random.normal(25, 5, 95), [50, 52, 55, 60, 65]),  # Outliers
-        'Missing_Feature': [np.nan if i % 10 == 0 else np.random.randint(50, 100) for i in range(100)]
+        [cite_start]'Missing_Feature': [np.nan if i % 10 == 0 else np.random.randint(50, 100) for i in range(100)] # Missing Data [cite: 14]
     }
     return pd.DataFrame(data)
 
@@ -50,7 +50,7 @@ raw_df = load_data()
 df = raw_df.copy()
 
 # --- SIDEBAR CONTROLS ---
-st.sidebar.title("⚙️ Preprocessing Controls")
+st.sidebar.title("Preprocessing Controls")
 
 st.sidebar.markdown("### 1. Outlier Handling")
 enable_outlier_handling = st.sidebar.checkbox(
@@ -88,9 +88,9 @@ scaling_method = st.sidebar.selectbox(
 display_performance_monitor()
 
 # --- MAIN UI ---
-st.title("🫀 Cardiovascular Risk: Data Preprocessing Lab")
+st.title("Cardiovascular Risk: Data Preprocessing Lab")
 
-with st.expander("📘 **Read Case Study & Instructions**", expanded=True):
+with st.expander("**Read Case Study & Instructions**", expanded=True):
     st.markdown("""
     **The Case:** A hospital's AI model failed to predict a severe cardiac event because it was fed noisy data containing equipment errors (outliers) and missing test results.
     
@@ -128,8 +128,7 @@ other_features = ['Age', 'Missing_Feature']
 if scaling_method == "StandardScaler (Z-Score)":
     scaler = StandardScaler()
     df[clinical_features] = scaler.fit_transform(df[clinical_features])
-    # Usually we still MinMax age, but for simplicity/consistency with the notebook we might scale all or mix
-    # The notebook specifically used MinMax for Age and Standard for Clinical
+    # Normalizing age and missing feature as per the notebook logic
     mm_scaler = MinMaxScaler()
     df[other_features] = mm_scaler.fit_transform(df[other_features])
     
@@ -143,10 +142,10 @@ elif scaling_method == "MinMaxScaler (0-1)":
 col1, col2 = st.columns([1, 1.5])
 
 with col1:
-    st.subheader("📋 Dataset Preview")
+    st.subheader("Dataset Preview")
     st.dataframe(df.head(10), use_container_width=True)
     
-    st.subheader("🚩 Outlier Detection (Z-Score)")
+    st.subheader("Outlier Detection (Z-Score)")
     # Calculate Z-scores on the CURRENT df (which might already be winsorized)
     # If winsorized, Z-scores will drop below threshold, showing success
     df_zscores = df[clinical_features].apply(zscore)
@@ -167,21 +166,10 @@ with col1:
     """)
 
 with col2:
-    st.subheader("📈 Feature Distributions")
-    
-    # Checkbox to overlay raw data?
-    show_raw = st.checkbox("Show Original Noisy Data (Grey)", value=False)
+    st.subheader("Feature Distributions")
     
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    if show_raw:
-        # Plot raw data in background for comparison
-        # We need to apply the SAME scaling to raw data to make it comparable on the plot
-        # IF scaling is active. If scaling is active, comparing raw (unscaled) to processed (scaled) is hard.
-        # So we only show raw if scaling is set to "None", OR we plot raw on a secondary axis?
-        # Simpler approach: Just plot the current DF.
-        pass
-
     # Main Boxplot
     sns.boxplot(data=df[clinical_features], ax=ax, palette="viridis")
     ax.set_title(f"Distribution of Clinical Metrics ({scaling_method})")
