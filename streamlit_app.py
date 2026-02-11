@@ -37,11 +37,11 @@ def load_data():
     data = {
         'Patient_ID': np.arange(1, 101),
         'Age': np.random.randint(20, 80, 100),
-        [cite_start]'Blood_Pressure': np.append(np.random.randint(90, 140, 95), [300, 310, 320, 330, 340]),  # Outliers [cite: 13]
-        [cite_start]'Cholesterol': np.append(np.random.randint(150, 250, 95), [500, 510, 520, 530, 540]),  # Outliers [cite: 13]
-        [cite_start]'Glucose': np.append(np.random.randint(70, 150, 95), [300, 310, 320, 330, 340]),  # Outliers [cite: 13]
+        'Blood_Pressure': np.append(np.random.randint(90, 140, 95), [300, 310, 320, 330, 340]),  # Outliers
+        'Cholesterol': np.append(np.random.randint(150, 250, 95), [500, 510, 520, 530, 540]),  # Outliers
+        'Glucose': np.append(np.random.randint(70, 150, 95), [300, 310, 320, 330, 340]),  # Outliers
         'BMI': np.append(np.random.normal(25, 5, 95), [50, 52, 55, 60, 65]),  # Outliers
-        [cite_start]'Missing_Feature': [np.nan if i % 10 == 0 else np.random.randint(50, 100) for i in range(100)] # Missing Data [cite: 14]
+        'Missing_Feature': [np.nan if i % 10 == 0 else np.random.randint(50, 100) for i in range(100)] # Missing Data
     }
     return pd.DataFrame(data)
 
